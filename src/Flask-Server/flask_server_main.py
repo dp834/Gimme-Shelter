@@ -44,7 +44,7 @@ def receivesms():
 
 
 def user_exists(number):
-    mycursor.execute("SELECT * FROM users WHERE phone_number = '{number}'".format(number=number))
+    mycursor.execute("SELECT * FROM Users WHERE phone_number = '{number}'".format(number=number))
     return len(list(mycursor)) == 1
 
 
