@@ -55,7 +55,9 @@ def get_names():
 @app.route('/get_tables', methods=['GET', 'POST'])
 def get_tables():
     mycursor.execute('SELECT table_name FROM information_schema.tables WHERE table_schema = \'GIMME_SHELTER\';')
-    return list(mycursor)
+    for c in mycursor:
+        print(c)
+    return ""
 
     
 if __name__ == "__main__":
@@ -63,7 +65,7 @@ if __name__ == "__main__":
         host="34.67.115.190",
         user="root",
         passwd="password123",
-        database="GIMMIE_SHELTER"
+        database="GIMME_SHELTER"
     )
     mycursor = mydb.cursor()
     app.run(host="0.0.0.0")
