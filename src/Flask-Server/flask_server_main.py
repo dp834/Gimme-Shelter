@@ -23,7 +23,7 @@ def receivesms():
     number = request.values.get('From', None)
 
     response = parseDatabaseLocations(generateQuery(body))
-    max = 20
+    max = 12
     i = 0
     while i < len(response):
         msg = "(" + str(math.ceil((i+1)/max)) + "/" + str(math.ceil(len(response)/max)) + ")\n"
