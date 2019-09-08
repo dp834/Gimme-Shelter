@@ -6,6 +6,7 @@ from twilio.rest import Client
 from extractLogic import *
 import json
 
+
 app = Flask(__name__)
 mycursor = None
 
@@ -13,20 +14,11 @@ mycursor = None
 sid = ""
 token = ""
 phoneNumber = ""
-
 with open('config.json') as json_file:
     data = json.load(json_file)
     sid = data['sid']
     token = data['token']
     phoneNumber = data['number']
-
-
-print(sid)
-print(token)
-print(phoneNumber)
-
-	
-
 client = Client(sid, token)
 
 
@@ -40,14 +32,17 @@ def receivesms():
     body = request.values.get('Body', None)
     number = request.values.get('From', None)
     
-    if " SNAP " in body.upper() or " FMNP " in body.upper() or " PFB " in body.upper() or " M " in body.upper() or " F " in body.upper():
-        info = body.split(" ").upper()
-        try:
-            info[4]
-            add_user(number, info[0], info[1], info[2], info[3], info[4])
-            send_sms(number, "Thank you for signing up. Here is a confirmation of the provided info:\nAge=%s\nGender=%s\nDependents=%s\nFood-Type=%sZIP-Code=%s" %(info[0], info[1], info[2], info[3], info[4]))
-        except IndexError:
-            send_sms(number, "Incomplete information provided, please try again")
+    if " SNAP " in body or " FMNP " in body or " PFB " in body or " M " in body or " F " in body:
+        if not user_exists(number):
+            info = body.split(" ")
+            try:
+                info[4]
+                add_user(number, info[0], info[1], info[2], info[3], info[4])
+                send_sms(number, "Thank you for signing up. Here is a confirmation of the provided info:\nAge=%s\nGender=%s\nDependents=%s\nFood-Type=%s\nZIP-Code=%s" %(info[0], info[1], info[2], info[3], info[4]))
+            except IndexError:
+                send_sms(number, "Incomplete information provided, please try again")
+        else:
+            send_sms(number, "Your SMS preferences have been updated.")
     else:
         response = parseDatabaseLocations(generateQuery(body))
         max = 12
@@ -76,7 +71,8 @@ def user_exists(number):
 
 
 def add_user(number, age, gender, dependents, food_type, region):
-    mycursor.execute("INSERT INTO Users (phone_number, age, gender, dependents, food_type, region)  VALUES ({phone_number}, {age}, {gender}, {dependents}, {food_type}, {region})".format(phone_number=number, age=age, gender=gender, dependents=dependents, food_type=food_type, region=region))
+    print("INSERT INTO Users (phone_number, age, gender, dependents, food_type, region)  VALUES ('{phone_number}', '{age}', '{gender}', '{dependents}', '{food_type}', '{region}')".format(phone_number=number, age=age, gender=gender, dependents=dependents, food_type=food_type, region=region))
+    mycursor.execute("INSERT INTO Users(phone_number, age, gender, dependents, food_type, region) VALUES('{phone_number}', '{age}', '{gender}', '{dependents}', '{food_type}', '{region}');".format(phone_number=number, age=age, gender=gender, dependents=dependents, food_type=food_type, region=region))
 
 
 def send_sms(num, msg):
