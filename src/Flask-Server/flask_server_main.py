@@ -29,13 +29,15 @@ def receivesms():
         msg = "(" + str(math.ceil((i+1)/max)) + "/" + str(math.ceil(len(response)/max)) + ")\n"
         if i+max<len(response):
             for j in range(i, i+max):
-                msg+=response[j].replace("|||", "\n")
+                msg+=response[j].replace("|||", "\n") + "\n"
             i+=max
         else:
             for j in range(i, i+(len(response)-i)):
-                msg+=response[j].replace("|||", "\n")
+                msg+=response[j].replace("|||", "\n") + "\n"
             i+=len(response)-i
         send_sms(number, msg)
+    
+    return ""
 
 
 def user_exists(number):
