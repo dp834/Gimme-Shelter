@@ -2,6 +2,11 @@ import os
 from flask import Flask, request,render_template
 from twilio.twiml.messaging_response import MessagingResponse
 import mysql.connector
+from twilio.rest import Client
+from textwrap import wrap
+from extractLogic import *
+
+client = Client("AC8adb168951a9e1c7845994be9e1ceabd", "57166fb17768f7561e426bae9a446666")
 
 
 app = Flask(__name__)
@@ -20,10 +25,29 @@ def receivesms():
 
     print(body)
 
+    response = parseDatabaseLocations(generateQuery(body))
+    print(len(response))
+    for i in range(0, len(response), 5):
+        sendMsg = "(" + str(int(i/5)+1) + "/" + str(int(len(response)/5)) + ")"
+        if i < len(response):
+            sendMsg += response[i].replace("|||", "\n") + "\n"
+        if i < len(response)-1:
+            sendMsg += response[i+1].replace("|||", "\n") + "\n"
+        if i < len(response)-2:
+            sendMsg += response[i+2].replace("|||", "\n") + "\n"
+        if i < len(response)-3:
+            sendMsg += response[i+3].replace("|||", "\n") + "\n"
+        if i < len(response)-4:
+            sendMsg += response[i+4].replace("|||", "\n") + "\n"
+        send_sms(number, sendMsg)
     resp = MessagingResponse()
     resp.message(body)
 
     return str(resp)
+
+
+def send_sms(num, msg):
+    client.messages.create(body=str(msg),from_="+12673100388",to=str(num))
 
 @app.route('/add_user', methods=['GET', 'POST'])
 def add_user():
