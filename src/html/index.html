@@ -1,0 +1,83 @@
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['line']});
+        google.charts.setOnLoadCallback(drawChart);
+        
+        var dataSet = [["Aug 1",  37, 80, 41, 10],
+                       ["Aug 2",  30, 69, 32, 10],
+                       ["Aug 3",  25, 57, 25, 10],
+                       ["Aug 4",  11, 18, 10, 10],
+                       ["Aug 5",  11, 17, 10, 10],
+                       ["Aug 6",   8, 13,  7, 10],
+                       ["Aug 7",   7, 12,  9, 10],
+                       ["Aug 8",  12, 29, 10, 10],
+                       ["Aug 9",  16, 42, 14, 10],
+                       ["Aug 10", 12, 30, 11, 10],
+                       ["Aug 11",  5,  7,  4, 10],
+                       ["Aug 12",  6,  8,  5, 10],
+                       ["Aug 13",  4,  6,  3, 10],
+                       ["Aug 14",  4,  6,  3, 10],
+                       ["Aug 15",  37, 80, 41, 4],
+                       ["Aug 16",  30, 69, 32, 4],
+                       ["Aug 17",  25, 57, 25, 4],
+                       ["Aug 18",  11, 18, 10, 4],
+                       ["Aug 19",  11, 17, 10, 4],
+                       ["Aug 20",   8, 13,  7, 4],
+                       ["Aug 21",   7, 12,  9, 4],
+                       ["Aug 22",  12, 29, 10, 4],
+                       ["Aug 23",  16, 42, 14, 4],
+                       ["Aug 24", 12, 30, 11, 6],
+                       ["Aug 25",  5,  7,  4, 6],
+                       ["Aug 26",  6,  8,  5, 6],
+                       ["Aug 27",  4,  6,  3, 6],
+                       ["Aug 28",  4,  6,  3, 6],
+                       ["Aug 29",  4,  6,  3, 6],
+                       ["Aug 30",  4,  6,  3, 6],
+                       ["Aug 31",  4,  6,  3, 6]];
+
+        function drawChart() {
+           var data = new google.visualization.DataTable();
+           data.addColumn('string', 'Day');
+           data.addColumn('number', 'Bed occupancy');
+           data.addColumn('number', 'Food packages provided');
+           data.addColumn('number', 'Condoms distributed');
+           data.addColumn('number', 'Flu shots administered');
+
+           data.addRows(dataSet);
+
+            var options = {
+                chart: {
+                    title: 'Item distribution trends'
+                },
+                backgroundColor: '#c0edd9',
+                width: 900,
+                height: 500
+            };
+
+            var graph = new google.charts.Line(document.getElementById('graph'));
+            graph.draw(data, google.charts.Line.convertOptions(options));
+        }
+    </script>
+    <style>
+        body {
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            background-color: #c0edd9;
+        }
+        #title {
+            font-size: 40px;
+            text-align: center;
+            padding-top: 50px;
+            padding-bottom: 50px;
+        }
+    </style>
+  </head>
+  <body>
+    <div id="title">Gimme Shelter</div>
+    <div id="graph" align="center"></div>
+  </body>
+</html>
+  
