@@ -23,34 +23,30 @@ def receivesms():
     body = request.values.get('Body', None)
     number = request.values.get('From', None)
 
-    print(body)
-
     response = parseDatabaseLocations(generateQuery(body))
-    print(len(response))
-    for i in range(0, len(response), 5):
-        sendMsg = "(" + str(int(i/5)+1) + "/" + str(int(len(response)/5)) + ")"
-        if i < len(response):
-            sendMsg += response[i].replace("|||", "\n") + "\n"
-        if i < len(response)-1:
-            sendMsg += response[i+1].replace("|||", "\n") + "\n"
-        if i < len(response)-2:
-            sendMsg += response[i+2].replace("|||", "\n") + "\n"
-        if i < len(response)-3:
-            sendMsg += response[i+3].replace("|||", "\n") + "\n"
-        if i < len(response)-4:
-            sendMsg += response[i+4].replace("|||", "\n") + "\n"
-        send_sms(number, sendMsg)
-    resp = MessagingResponse()
-    resp.message(body)
+    max = 20
+    i = 0
+    while i < len(response):
+        msg = "(" + str(math.ceil((i+1)/max)) + "/" + str(math.ceil(len(response)/max)) + ")\n"
+        if i+max<len(response):
+            for j in range(i, i+max):
+                msg+=response[j].replace("|||", "\n")
+            i+=max
+        else:
+            for j in range(i, i+(len(response)-i)):
+                msg+=response[j].replace("|||", "\n")
+            i+=len(response)-i
+        send_sms(number, msg)
 
-    return str(resp)
 
 def user_exists(number):
     mycursor.execute("SELECT * FROME GIMME_SHELTER.users WHERE phone_number = {number};".format(number=number))
     return len(list(mycursor)) == 1
 
+
 def send_sms(num, msg):
     client.messages.create(body=str(msg),from_="+12673100388",to=str(num))
+
 
 def add_user(number, age, gender, dependents, food_type, region):
     if(None in [number, age, gender, dependents, food_type, region]):
@@ -59,8 +55,8 @@ def add_user(number, age, gender, dependents, food_type, region):
         return str(resp)
 
     mycursor.execute("INSERT INTO GIMME_SHELTER.users (phone_number, age, gender, dependents, food_type, region)  VALUES ({phone_number}, {age}, {gender}, {dependents}, {food_type}, {region}".format(phone_number, age, gender, dependents, food_type, region))
-
     return ""
+
 
 @app.route('/update_count', methods=['GET', 'POST'])
 def update_count():
