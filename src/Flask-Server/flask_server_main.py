@@ -12,8 +12,10 @@ def render_home():
 
 
 @app.route('/receivesms',methods=['GET', 'POST'])
-def receiesms():
+def receivesms():
     body = request.values.get('Body', None)
+    number = request.values.get('From', None)
+
     print(body)
 
     resp = MessagingResponse()
