@@ -21,7 +21,7 @@ def render_home():
 def receivesms():
     body = request.values.get('Body', None)
     number = request.values.get('From', None)
-
+    
     response = parseDatabaseLocations(generateQuery(body))
     max = 12
     i = 0
@@ -37,16 +37,15 @@ def receivesms():
             i+=len(response)-i
         send_sms(number, msg)
     
+    if not users_exists(number):
+        send_sms(number, "If you would like to receive daily information about things in your area, please send the following info in a space separated format.\n\nAGE\nGENDER\n# OF DEPENDENTS\n(SNAP,FMNP,PFB)\nZIP CODE")
+
     return ""
 
 
 def user_exists(number):
     mycursor.execute("SELECT * FROME GIMME_SHELTER.users WHERE phone_number = {number};".format(number=number))
     return len(list(mycursor)) == 1
-
-
-def send_sms(num, msg):
-    client.messages.create(body=str(msg),from_="+12673100388",to=str(num))
 
 
 def add_user(number, age, gender, dependents, food_type, region):
@@ -57,6 +56,10 @@ def add_user(number, age, gender, dependents, food_type, region):
 
     mycursor.execute("INSERT INTO GIMME_SHELTER.users (phone_number, age, gender, dependents, food_type, region)  VALUES ({phone_number}, {age}, {gender}, {dependents}, {food_type}, {region}".format(phone_number, age, gender, dependents, food_type, region))
     return ""
+
+
+def send_sms(num, msg):
+    client.messages.create(body=str(msg),from_="+12673100388",to=str(num))
 
 
 @app.route('/update_count', methods=['GET', 'POST'])
