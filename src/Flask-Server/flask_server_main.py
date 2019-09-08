@@ -4,11 +4,25 @@ from twilio.twiml.messaging_response import MessagingResponse
 import mysql.connector
 from twilio.rest import Client
 from extractLogic import *
-
+import json
 
 app = Flask(__name__)
 mycursor = None
-client = Client("AC8adb168951a9e1c7845994be9e1ceabd", "57166fb17768f7561e426bae9a446666")
+
+
+sid = ""
+token = ""
+phoneNumber = ""
+
+with open('config.json') as json_file:
+    data = json.load(json_file):
+    sid = data['sid']
+    token = data['token']
+    phoneNumber = data['number']
+
+	
+
+client = Client(sid, token)
 
 
 @app.route('/')
@@ -61,7 +75,7 @@ def add_user(number, age, gender, dependents, food_type, region):
 
 
 def send_sms(num, msg):
-    client.messages.create(body=str(msg),from_="+12673100388",to=str(num))
+    client.messages.create(body=str(msg),from_=str(phoneNumber),to=str(num))
 
 
 @app.route('/update_count', methods=['GET', 'POST'])
