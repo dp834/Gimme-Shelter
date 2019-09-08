@@ -26,7 +26,7 @@ def receivesms():
 
 @app.route('/<string:page_name>/')
 def render_static(page_name):
-    if os.path.exists('/home/gimmeshelter/Flask-Server/templates/%s.html' % page_name):
+    if os.path.exists('/home/gimmeshelter/Gimme-Shelter/src/Flask-Server/templates/%s.html' % page_name):
         return render_template('%s.html' % page_name)
     else:
         return render_template('404.html')
