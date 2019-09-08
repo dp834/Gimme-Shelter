@@ -15,10 +15,15 @@ token = ""
 phoneNumber = ""
 
 with open('config.json') as json_file:
-    data = json.load(json_file):
+    data = json.load(json_file)
     sid = data['sid']
     token = data['token']
     phoneNumber = data['number']
+
+
+print(sid)
+print(token)
+print(phoneNumber)
 
 	
 
