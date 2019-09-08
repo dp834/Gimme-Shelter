@@ -25,6 +25,24 @@ def receivesms():
 
     return str(resp)
 
+@app.route('/add_user', methods=['GET', 'POST'])
+def add_user():
+    number = request.values.get("number", None)
+    age = int(request.values.get("age", None))
+    gender = request.values.get("gender", None)
+    dependents = requests.values.get("dependents", None)
+    food_type = requests.values.get("food_type", None)
+    region = requests.values.get("region", None)
+
+    if(None in [number, age, gender, dependents, food_type, region]):
+        resp = MessagingResponse()
+        resp.message("Invalid data")
+        return str(resp)
+
+
+    mycursor.execute("INSERT INTO GIMME_SHELTER.users (phone_number, age, gender, dependents, food_type, region)  VALUES ({phone_number}, {age}, {gender}, {dependents}, {food_type}, {region}".format(phone_number, age, gender, dependents, food_type, region))
+
+    return ""
 
 @app.route('/update_count', methods=['GET', 'POST'])
 def update_count():
