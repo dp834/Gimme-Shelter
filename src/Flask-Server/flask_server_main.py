@@ -5,11 +5,10 @@ import mysql.connector
 from twilio.rest import Client
 from extractLogic import *
 
-client = Client("AC8adb168951a9e1c7845994be9e1ceabd", "57166fb17768f7561e426bae9a446666")
-
 
 app = Flask(__name__)
 mycursor = None
+client = Client("AC8adb168951a9e1c7845994be9e1ceabd", "57166fb17768f7561e426bae9a446666")
 
 
 @app.route('/')
@@ -22,23 +21,32 @@ def receivesms():
     body = request.values.get('Body', None)
     number = request.values.get('From', None)
     
-    response = parseDatabaseLocations(generateQuery(body))
-    max = 12
-    i = 0
-    while i < len(response):
-        msg = "(" + str(math.ceil((i+1)/max)) + "/" + str(math.ceil(len(response)/max)) + ")\n"
-        if i+max<len(response):
-            for j in range(i, i+max):
-                msg+=response[j].replace("|||", "\n") + "\n"
-            i+=max
-        else:
-            for j in range(i, i+(len(response)-i)):
-                msg+=response[j].replace("|||", "\n") + "\n"
-            i+=len(response)-i
-        send_sms(number, msg)
-    
-    if not user_exists(number):
-        send_sms(number, "If you would like to receive daily information about things in your area, please send the following info in a space separated format.\n\nAGE\nGENDER\n# OF DEPENDENTS\n(SNAP,FMNP,PFB)\nZIP CODE")
+    if " SNAP " in body.upper() or " FMNP " in body.upper() or " PFB " in body.upper() or " M " in body.upper() or " F " in body.upper():
+        info = body.split(" ").upper()
+        try:
+            info[4]
+            add_user(number, info[0], info[1], info[2], info[3], info[4])
+            send_sms(number, "Thank you for signing up. Here is a confirmation of the provided info:\nAge=%s\nGender=%s\nDependents=%s\nFood-Type=%sZIP-Code=%s" %(info[0], info[1], info[2], info[3], info[4]))
+        except IndexError:
+            send_sms(number, "Incomplete information provided, please try again")
+    else:
+        response = parseDatabaseLocations(generateQuery(body))
+        max = 12
+        i = 0
+        while i < len(response):
+            msg = "(" + str(math.ceil((i+1)/max)) + "/" + str(math.ceil(len(response)/max)) + ")\n"
+            if i+max<len(response):
+                for j in range(i, i+max):
+                    msg+=response[j].replace("|||", "\n") + "\n"
+                i+=max
+            else:
+                for j in range(i, i+(len(response)-i)):
+                    msg+=response[j].replace("|||", "\n") + "\n"
+                i+=len(response)-i
+            send_sms(number, msg)
+        
+        if not user_exists(number):
+            send_sms(number, "If you would like to receive daily information about things in your area, please send the following info in a space separated format.\n\nAGE\nGENDER: (M OR F)\n#-OF-DEPENDENTS\nFOOD-TYPE: (SNAP,FMNP,PFB)\nZIP-CODE")
 
     return ""
 
@@ -49,13 +57,7 @@ def user_exists(number):
 
 
 def add_user(number, age, gender, dependents, food_type, region):
-    if(None in [number, age, gender, dependents, food_type, region]):
-        resp = MessagingResponse()
-        resp.message("Invalid data")
-        return str(resp)
-
-    mycursor.execute("INSERT INTO GIMME_SHELTER.users (phone_number, age, gender, dependents, food_type, region)  VALUES ({phone_number}, {age}, {gender}, {dependents}, {food_type}, {region}".format(phone_number, age, gender, dependents, food_type, region))
-    return ""
+    mycursor.execute("INSERT INTO Users (phone_number, age, gender, dependents, food_type, region)  VALUES ({phone_number}, {age}, {gender}, {dependents}, {food_type}, {region})".format(phone_number=number, age=age, gender=gender, dependents=dependents, food_type=food_type, region=region))
 
 
 def send_sms(num, msg):
