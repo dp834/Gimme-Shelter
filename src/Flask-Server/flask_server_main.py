@@ -1,9 +1,8 @@
-import os
+import os, math
 from flask import Flask, request,render_template
 from twilio.twiml.messaging_response import MessagingResponse
 import mysql.connector
 from twilio.rest import Client
-from textwrap import wrap
 from extractLogic import *
 
 client = Client("AC8adb168951a9e1c7845994be9e1ceabd", "57166fb17768f7561e426bae9a446666")
