@@ -5,7 +5,6 @@ import mysql.connector
 
 
 app = Flask(__name__)
-
 mycursor = None
 
 
@@ -26,6 +25,7 @@ def receivesms():
 
     return str(resp)
 
+
 @app.route('/update_count', methods=['GET', 'POST'])
 def update_count():
     table = request.values.get("type", None)
@@ -39,6 +39,7 @@ def update_count():
     mycursor.execute("UPDATE {table} SET curr_count={new_count} WHERE GIMIE_SHELTER.{table}.name = {name};".format(table=table, new_count=new_count, name=name))
     return ""
 
+
 @app.route('/get_names', methods=['GET', 'POST'])
 def get_names():
     table = request.values.get("type", None)
@@ -50,32 +51,19 @@ def get_names():
     mycursor.execute("SELECT name FROM GIMMIE_SHELTER.{table};".format(table=table))
     return ""
 
-<<<<<<< HEAD
-=======
+
 @app.route('/get_tables', methods=['GET', 'POST'])
 def get_tables():
     mycursor.execute('SELECT table_name FROM information_schema.tables WHERE table_schema = \'GIMME_SHELTER\';')
     return list(mycursor)
 
     
-@app.route('/<string:page_name>/')
-def render_static(page_name):
-    if os.path.exists('/home/gimmeshelter/Gimme-Shelter/src/Flask-Server/templates/%s.html' % page_name):
-        return render_template('%s.html' % page_name)
-    else:
-        return render_template('404.html')
-
-
-
->>>>>>> 36002542d639ec7741f1e9523778e79a74ec0d12
 if __name__ == "__main__":
-    app.run(host="0.0.0.0")
     mydb = mysql.connector.connect(
         host="34.67.115.190",
         user="root",
         passwd="password123",
         database="GIMMIE_SHELTER"
     )
-
     mycursor = mydb.cursor()
-
+    app.run(host="0.0.0.0")
