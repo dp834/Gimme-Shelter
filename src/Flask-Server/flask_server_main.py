@@ -37,7 +37,7 @@ def receivesms():
             i+=len(response)-i
         send_sms(number, msg)
     
-    if not users_exists(number):
+    if not user_exists(number):
         send_sms(number, "If you would like to receive daily information about things in your area, please send the following info in a space separated format.\n\nAGE\nGENDER\n# OF DEPENDENTS\n(SNAP,FMNP,PFB)\nZIP CODE")
 
     return ""
