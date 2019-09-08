@@ -25,20 +25,15 @@ def receivesms():
 
     return str(resp)
 
-@app.route('/add_user', methods=['GET', 'POST'])
-def add_user():
-    number = request.values.get("number", None)
-    age = int(request.values.get("age", None))
-    gender = request.values.get("gender", None)
-    dependents = requests.values.get("dependents", None)
-    food_type = requests.values.get("food_type", None)
-    region = requests.values.get("region", None)
+def user_exists(number):
+    mycursor.execute("SELECT * FROME GIMME_SHELTER.users WHERE phone_number = {number};".format(number=number))
+    return len(list(mycursor)) == 1
 
+def add_user(number, age, gender, dependents, food_type, region):
     if(None in [number, age, gender, dependents, food_type, region]):
         resp = MessagingResponse()
         resp.message("Invalid data")
         return str(resp)
-
 
     mycursor.execute("INSERT INTO GIMME_SHELTER.users (phone_number, age, gender, dependents, food_type, region)  VALUES ({phone_number}, {age}, {gender}, {dependents}, {food_type}, {region}".format(phone_number, age, gender, dependents, food_type, region))
 
@@ -77,7 +72,7 @@ def get_tables():
         print(c)
     return ""
 
-    
+
 if __name__ == "__main__":
     mydb = mysql.connector.connect(
         host="34.67.115.190",
